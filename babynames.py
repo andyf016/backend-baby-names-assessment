@@ -30,10 +30,16 @@ Suggested milestones for incremental development:
  - Build the [year, 'name rank', ... ] list and print it
  - Fix main() to use the extracted_names list
 """
+__author__ = "Andrew Fillenwarth, big thanks to Janell and David R. for helping me find the needle in the hay stack!"
 
 import sys
 import re
 import argparse
+
+
+def convert_tuple(tup):
+    strg = ' '.join(tup)
+    return strg
 
 
 def extract_names(filename):
@@ -44,8 +50,25 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
     names = []
-    # +++your code here+++
-    return names
+    names_dict = {}
+    with open(filename) as html_file:
+        line_list = html_file.readlines()
+        #print(line_list)
+        year_pattern = re.compile(r'(Popularity in )(\d\d\d\d)')
+        name_pattern = re.compile(r'(<tr align="right"><td>)(\d{1,4})(</td><td>)([A-Z][a-z]+)(</td><td>)([A-Z][a-z]+)')
+        for line in line_list:
+            name_match = name_pattern.finditer(line)                            
+            year_match = year_pattern.finditer(line)
+            for match in name_match:
+                names_dict.setdefault(match.group(4), match.group(2))
+                names_dict.setdefault(match.group(6), match.group(2))
+            for match in year_match:
+                names.append(match.group(2))
+        listy = list(names_dict.items())
+        for item in listy:
+            names.append(convert_tuple(item))
+        names.sort()
+        return names
 
 
 def create_parser():
@@ -82,7 +105,20 @@ def main(args):
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
-    # +++your code here+++
+
+    if create_summary:
+        for item in file_list:
+            name = str(item) + '.summary'
+            f = open(name, 'a')
+            text = '\n'.join(extract_names(item))
+            f.write(text)
+            f.close 
+    else:
+        for item in file_list:
+            text = '\n'.join(extract_names(item))
+            print(text)
+    
+
 
 
 if __name__ == '__main__':
