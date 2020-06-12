@@ -30,6 +30,7 @@ Suggested milestones for incremental development:
  - Build the [year, 'name rank', ... ] list and print it
  - Fix main() to use the extracted_names list
 """
+__author__ = "Andrew Fillenwarth, big thanks to Janell and David R. for helping me find the needle in the hay stack!"
 
 import sys
 import re
